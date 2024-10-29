@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import Login from "./Pages/login";
+import EmployeeMenu from "./Pages/employeeMenu";
+import ManagerHub from "./Pages/managerHub";
+import ManagerMenu from "./Pages/managerMenu";
+import EmployeeSale from "./Pages/employeeSale";
+import NewSale from "./Pages/newSale";
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Outlet,
+	RouterProvider,
+	Route,
+} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<Route path="/" element={<AppLayout />}>
+			<Route path="" element={<Login />} />
+			<Route path="employee/">
+				<Route path="" element={<EmployeeMenu />} />
+				<Route path="sales">
+					<Route path="" element={<EmployeeSale />} />
+					<Route path="newsale" element={<NewSale />} />
+				</Route>
+			</Route>
+		</Route>
+	)
+);
+
+function AppLayout() {
+	return <Outlet />;
 }
+
+const App = () => <RouterProvider router={router} />;
 
 export default App;
