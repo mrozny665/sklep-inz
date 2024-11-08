@@ -1,9 +1,9 @@
 const SaleListItem = ({ element }) => {
 	return (
 		<div class="sale-list-item">
-			<div>{element.text}</div>
-			<div>24-08-2024</div>
-			<div>127,21 zł</div>
+			<div>{element.bill_id}</div>
+			<div>{element.issue_date}</div>
+			<div>{element.price_with_vat} zł</div>
 		</div>
 	);
 };

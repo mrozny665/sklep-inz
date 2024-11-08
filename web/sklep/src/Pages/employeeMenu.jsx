@@ -11,7 +11,9 @@ const EmployeeMenu = () => {
 					<div class="menu-tile">Dostawa</div>
 				</div>
 				<div class="menu-container-2">
-					<div class="menu-tile">Przegląd towaru</div>
+					<NavLink to="products" className="menu-tile">
+						Przegląd towaru
+					</NavLink>
 					<NavLink to="/" className="menu-tile">
 						Wyloguj
 					</NavLink>

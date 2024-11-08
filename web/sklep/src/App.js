@@ -13,6 +13,7 @@ import {
 	RouterProvider,
 	Route,
 } from "react-router-dom";
+import Products from "./Pages/products";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
 					<Route path="" element={<EmployeeSale />} />
 					<Route path="newsale" element={<NewSale />} />
 				</Route>
+				<Route path="products" element={<Products />} />
 			</Route>
 		</Route>
 	)

@@ -1,12 +1,20 @@
+import { useEffect, useState } from "react";
 import SaleListItem from "../Components/saleListItem";
 import { NavLink } from "react-router-dom";
+import { getBills } from "../Services/apiService";
 
 const EmployeeSale = () => {
-	const sales = [
-		{ id: 1, text: 1 },
-		{ id: 2, text: 2 },
-	];
-	const list = sales.map((it) => <SaleListItem key={it.id} element={it} />);
+	const [sales, setSales] = useState([]);
+
+	useEffect(() => {
+		let mount = true;
+		getBills().then((res) => {
+			console.log("Response from api ", res);
+			setSales(res);
+			return () => (mount = false);
+		});
+	}, []);
+
 	return (
 		<div>
 			<div class="navbar">
@@ -19,7 +27,9 @@ const EmployeeSale = () => {
 			</div>
 			<div class="sale-list">
 				<div>Twoje rachunki</div>
-				{list}
+				{sales.map((it) => (
+					<SaleListItem key={it.id_rachunku} element={it} />
+				))}
 			</div>
 		</div>
 	);
