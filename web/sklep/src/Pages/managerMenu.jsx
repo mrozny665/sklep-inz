@@ -1,13 +1,21 @@
+import { NavLink } from "react-router-dom";
+
 const ManagerMenu = () => {
 	return (
 		<main class="grid menu">
 			<div class="menu-container-1">
 				<div class="menu-container-2">
-					<div class="menu-tile">Przegląd sprzedaży</div>
-					<div class="menu-tile">Pracownicy</div>
+					<NavLink to="sales" className="menu-tile">
+						Przegląd sprzedaży
+					</NavLink>
+					<NavLink to="employees" className="menu-tile">
+						Pracownicy
+					</NavLink>
 				</div>
 				<div class="menu-container-2">
-					<div class="menu-tile">Powrót</div>
+					<NavLink to="/hub" className="menu-tile">
+						Powrót
+					</NavLink>
 				</div>
 			</div>
 		</main>

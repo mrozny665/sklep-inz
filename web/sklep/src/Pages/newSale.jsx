@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { useEffect, useState } from "react";
 import { getProducts } from "../Services/apiService";
 import axios from "axios";
+import "../Services/dateExtentions.jsx";
 
 const NewSale = () => {
 	const [items, setItems] = useState([]);
@@ -42,12 +43,6 @@ const NewSale = () => {
 		});
 	}, [modalIsOpen]);
 
-	Date.prototype.toJSONDate = function () {
-		let string = this.toJSON();
-		string = string.substring(0, 10);
-		return string;
-	};
-
 	const handleAddBill = async (e) => {
 		e.preventDefault();
 		console.log(items);
@@ -57,7 +52,7 @@ const NewSale = () => {
 			sum_no_vat += it.price_no_vat * it.count;
 			sum_with_vat += it.price_with_vat * it.count;
 		});
-		let date = new Date(Date.now());
+		const date = new Date(Date.now());
 		const bill = {
 			issue_date: date.toJSONDate(),
 			products_count: items.length,
@@ -87,12 +82,12 @@ const NewSale = () => {
 		setQuery(e.target.value);
 	};
 
-	const [changeColor, setChangeColor] = useState(false);
+	const [isPicked, setIsPicked] = useState(false);
 	const [pickedProduct, setPickedProduct] = useState();
 
 	const handleClickItem = (e) => {
 		console.log("Click " + e);
-		setChangeColor(true);
+		setIsPicked(true);
 		setPickedProduct(e);
 	};
 
@@ -109,7 +104,7 @@ const NewSale = () => {
 		});
 		setItems(temp);
 		setPickedProduct();
-		setChangeColor(false);
+		setIsPicked(false);
 		setIsOpen(false);
 	};
 
@@ -128,7 +123,7 @@ const NewSale = () => {
 					<input value={query} onChange={handleQuery}></input>
 				</div>
 				<div>{/*Góra listy */}</div>
-				{changeColor ? (
+				{isPicked ? (
 					<div>
 						<ProductItem element={pickedProduct} />
 						<label htmlFor="count">Liczba</label>
@@ -153,6 +148,7 @@ const NewSale = () => {
 						</div>
 					</div>
 					{products
+						.filter((it) => it.count > 0)
 						.filter((it) => it.product_name.includes(query))
 						.map((it) => (
 							<div key={it.id} onClick={() => handleClickItem(it)}>

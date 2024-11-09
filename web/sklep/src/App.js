@@ -14,6 +14,8 @@ import {
 	Route,
 } from "react-router-dom";
 import Products from "./Pages/products";
+import Supplies from "./Pages/supplies";
+import Employees from "./Pages/employees";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -26,6 +28,12 @@ const router = createBrowserRouter(
 					<Route path="newsale" element={<NewSale />} />
 				</Route>
 				<Route path="products" element={<Products />} />
+				<Route path="supplies" element={<Supplies />} />
+			</Route>
+			<Route path="hub" element={<ManagerHub />} />
+			<Route path="manager/">
+				<Route path="" element={<ManagerMenu />} />
+				<Route path="employees" element={<Employees />} />
 			</Route>
 		</Route>
 	)

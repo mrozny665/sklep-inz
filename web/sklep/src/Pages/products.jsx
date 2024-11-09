@@ -35,6 +35,9 @@ const Products = () => {
 		};
 		console.log(item);
 		const res = await axios.post("/api/products/", item);
+		const temp = products;
+		temp.push(item);
+		setProducts(temp);
 	};
 
 	useEffect(() => {

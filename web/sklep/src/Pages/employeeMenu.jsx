@@ -8,7 +8,9 @@ const EmployeeMenu = () => {
 					<NavLink to="sales" className="menu-tile">
 						Sprzedaż towaru
 					</NavLink>
-					<div class="menu-tile">Dostawa</div>
+					<NavLink to="supplies" className="menu-tile">
+						Dostawa
+					</NavLink>
 				</div>
 				<div class="menu-container-2">
 					<NavLink to="products" className="menu-tile">
