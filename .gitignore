@@ -1,0 +1,18 @@
+backend/.venv/
+backend/.idea/
+diagramy/shop.vpp.bak_000f
+diagramy/shop.vpp.bak_001d
+diagramy/shop.vpp.bak_002d
+diagramy/shop.vpp.bak_003d
+diagramy/shop.vpp.bak_004d
+web/package-lock.json
+web/package.json
+web/node_modules/
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
