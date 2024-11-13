@@ -25,8 +25,12 @@ const NewSale = () => {
 
 	const list = items.map((it) => (
 		<div>
-			<button onClick={() => handleDelete(it.id)}>Usuń</button>
-			<SaleItem key={it.id} element={it} />
+			<div class="sale-item">
+				<div class="sale-item-part">
+					<button onClick={() => handleDelete(it.id)}>Usuń</button>
+				</div>
+				<SaleItem key={it.id} element={it} />
+			</div>
 		</div>
 	));
 
@@ -111,26 +115,32 @@ const NewSale = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<button onClick={handleAddBill}>Zapisz</button>
+				<button class="nav-button" onClick={openModal}>
+					Dodaj towar
+				</button>
+				<button class="nav-button" onClick={handleAddBill}>
+					Zapisz
+				</button>
 				<NavLink to="/employee/sales" className="nav-button">
 					Powrót
 				</NavLink>
-				<button onClick={openModal}>Dodaj towar</button>
 			</div>
 			<Modal isOpen={modalIsOpen} contentLabel="Test">
-				<button onClick={closeModal}>Zamknij</button>
-				<div>
-					<input value={query} onChange={handleQuery}></input>
-				</div>
-				<div>{/*Góra listy */}</div>
+				<button className="nav-button" onClick={closeModal}>
+					Zamknij
+				</button>
 				{isPicked ? (
 					<div>
-						<ProductItem element={pickedProduct} />
-						<label htmlFor="count">Liczba</label>
+						<div>Wybrany przedmiot</div>
+						<div class="product-item">
+							<ProductItem element={pickedProduct} />
+						</div>
+						<label htmlFor="count">Liczba: </label>
 						<input
 							id="count"
 							value={count}
 							type="number"
+							defaultValue={0}
 							onChange={(e) => setCount(e.target.value)}
 							min={1}
 							max={pickedProduct.count}
@@ -138,21 +148,26 @@ const NewSale = () => {
 						<button onClick={handleAdd}>Dodaj</button>
 					</div>
 				) : null}
+				<div>
+					<label htmlFor="query">Wyszukaj: </label>
+					<input id="query" value={query} onChange={handleQuery}></input>
+				</div>
 				<div class="sale-list">
-					<div class="sale-list-item" style={{ backgroundColor: "white" }}>
-						<div>Nazwa towaru</div>
-						<div class="sale-item-right">
-							<div>Stawka VAT</div>
-							<div>Cena 1 szt. bez VAT</div>
-							<div>Cena 1 szt. z VAT</div>
-						</div>
+					<div class="product-item-main" style={{ paddingLeft: "120px" }}>
+						<div class="product-item-main-part">Nazwa towaru</div>
+						<div></div>
+						<div class="product-item-main-part">Stawka VAT</div>
+						<div class="product-item-main-part">Cena 1 szt. bez VAT</div>
+						<div class="product-item-main-part">Cena 1 szt. z VAT</div>
 					</div>
 					{products
 						.filter((it) => it.count > 0)
 						.filter((it) => it.product_name.includes(query))
 						.map((it) => (
 							<div key={it.id} onClick={() => handleClickItem(it)}>
-								<ProductItem key={it.id} element={it} />
+								<div class="product-item">
+									<ProductItem key={it.id} element={it} />
+								</div>
 							</div>
 						))}
 				</div>
@@ -160,15 +175,14 @@ const NewSale = () => {
 			<div>{/*Faktura*/}</div>
 			<div>{/*Góra listy */}</div>
 			<div class="sale-list">
-				<div class="sale-list-item" style={{ backgroundColor: "white" }}>
-					<div>Nazwa towaru</div>
-					<div class="sale-item-right">
-						<div>Stawka VAT</div>
-						<div>Cena 1 szt. bez VAT</div>
-						<div>Cena 1 szt. z VAT</div>
-						<div>Cena łączna bez VAT</div>
-						<div>Cena łączna z VAT</div>
-					</div>
+				<div class="sale-item-main" style={{ paddingLeft: "130px" }}>
+					<div class="sale-item-main-part">Nazwa towaru</div>
+					<div></div>
+					<div class="sale-item-main-part">Stawka VAT</div>
+					<div class="sale-item-main-part">Cena 1 szt. bez VAT</div>
+					<div class="sale-item-main-part">Cena 1 szt. z VAT</div>
+					<div class="sale-item-main-part">Cena łączna bez VAT</div>
+					<div class="sale-item-main-part">Cena łączna z VAT</div>
 				</div>
 				{list}
 			</div>

@@ -64,61 +64,76 @@ const Products = () => {
 	return (
 		<div>
 			<div class="navbar">
+				<button class="nav-button" onClick={openModal}>
+					Nowy towar
+				</button>
 				<NavLink to="/employee" className="nav-button">
 					Powrót
 				</NavLink>
-				<button onClick={openModal}>Nowy towar</button>
 			</div>
 			<Modal isOpen={modalIsOpen} contentLabel="Test">
-				<input
-					name="name"
-					placeholder="Nazwa produktu"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-				></input>
-				<input
-					name="unit"
-					placeholder="Jednostka"
-					value={unit}
-					onChange={(e) => setUnit(e.target.value)}
-				></input>
-				<select value={vat} onChange={(e) => setVat(e.target.value)}>
-					<option value="0">0%</option>
-					<option value="5">5%</option>
-					<option value="8">8%</option>
-					<option value="23">23%</option>
-				</select>
-				<input
-					name="price"
-					placeholder="Cena bez VAT"
-					value={price}
-					onChange={(e) => setPrice(e.target.value)}
-					min={0}
-					type="number"
-					step={0.01}
-				></input>
-				<button onClick={handleAdd}>Zapisz</button>
-				<button onClick={closeModal}>Zamknij</button>
+				<div>
+					<div class="new-product">
+						<label htmlFor="name">Nazwa produktu: </label>
+						<input
+							id="name"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						></input>
+						<label htmlFor="unit">Jednostka: </label>
+						<input
+							id="unit"
+							value={unit}
+							onChange={(e) => setUnit(e.target.value)}
+						></input>
+						<label htmlFor="vat">Stawka VAT: </label>
+						<select
+							id="vat"
+							value={vat}
+							onChange={(e) => setVat(e.target.value)}
+						>
+							<option value="0">0%</option>
+							<option value="5">5%</option>
+							<option value="8">8%</option>
+							<option value="23">23%</option>
+						</select>
+						<label htmlFor="price">Cena bez VAT: </label>
+						<input
+							id="price"
+							value={price}
+							onChange={(e) => setPrice(e.target.value)}
+							min={0}
+							type="number"
+							step={0.01}
+						></input>
+					</div>
+					<button onClick={handleAdd}>Zapisz</button>
+					<button onClick={closeModal}>Zamknij</button>
+				</div>
 			</Modal>
 			<div>{/*Faktura*/}</div>
 			<div>
-				<input value={query} onChange={handleQuery}></input>
+				<label htmlFor="query">Wyszukaj: </label>
+				<input id="query" value={query} onChange={handleQuery}></input>
 			</div>
 			<div>{/*Góra listy */}</div>
 			<div class="sale-list">
-				<div class="sale-list-item" style={{ backgroundColor: "white" }}>
-					<div>Nazwa towaru</div>
-					<div class="sale-item-right">
-						<div>Stawka VAT</div>
-						<div>Cena 1 szt. bez VAT</div>
-						<div>Cena 1 szt. z VAT</div>
-					</div>
+				<div class="product-item-main" style={{ paddingLeft: "130px" }}>
+					<div class="product-item-main-part">Nazwa towaru</div>
+					<div></div>
+					<div class="product-item-main-part">Stawka VAT</div>
+					<div class="product-item-main-part">Cena 1 szt. bez VAT</div>
+					<div class="product-item-main-part">Cena 1 szt. z VAT</div>
 				</div>
 				{products
 					.filter((it) => it.product_name.includes(query))
 					.map((it) => (
-						<div>
-							<button onClick={() => handleDelete(it.product_id)}>Usuń</button>
+						<div class="product-item">
+							<div class="product-item-part">
+								<button onClick={() => handleDelete(it.product_id)}>
+									Usuń
+								</button>
+							</div>
 							<ProductItem key={it.id} element={it} />
 						</div>
 					))}

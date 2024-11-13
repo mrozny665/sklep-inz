@@ -69,20 +69,20 @@ const Supplies = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<button onClick={openModal}>Dodaj dostawę</button>
+				<button class="nav-button" onClick={openModal}>
+					Dodaj dostawę
+				</button>
 				<NavLink to="/employee" className="nav-button">
 					Powrót
 				</NavLink>
 			</div>
 			<Modal isOpen={modalIsOpen} contentLabel="Test">
 				<button onClick={closeModal}>Zamknij</button>
-				<div>
-					<input value={query} onChange={handleQuery}></input>
-				</div>
-				<div>{/*Góra listy */}</div>
 				{isPicked ? (
 					<div>
-						<ProductItem element={pickedProduct} />
+						<div class="product-item">
+							<ProductItem element={pickedProduct} />
+						</div>
 						<label htmlFor="count">Liczba</label>
 						<input
 							id="count"
@@ -94,19 +94,26 @@ const Supplies = () => {
 						<button onClick={handleAdd}>Dodaj</button>
 					</div>
 				) : null}
+				<div>
+					<label htmlFor="query">Wyszukaj: </label>
+					<input id="query" value={query} onChange={handleQuery}></input>
+				</div>
 				<div class="sale-list">
-					<div class="sale-list-item" style={{ backgroundColor: "white" }}>
-						<div>Nazwa towaru</div>
-						<div class="sale-item-right">
-							<div>Stawka VAT</div>
-							<div>Cena 1 szt. bez VAT</div>
-							<div>Cena 1 szt. z VAT</div>
-						</div>
+					<div class="product-item-main" style={{ paddingLeft: "120px" }}>
+						<div class="product-item-main-part">Nazwa towaru</div>
+						<div></div>
+						<div class="product-item-main-part">Stawka VAT</div>
+						<div class="product-item-main-part">Cena 1 szt. bez VAT</div>
+						<div class="product-item-main-part">Cena 1 szt. z VAT</div>
 					</div>
 					{products
 						.filter((it) => it.product_name.includes(query))
 						.map((it) => (
-							<div key={it.id} onClick={() => handleClickItem(it)}>
+							<div
+								class="product-item"
+								key={it.id}
+								onClick={() => handleClickItem(it)}
+							>
 								<ProductItem key={it.id} element={it} />
 							</div>
 						))}

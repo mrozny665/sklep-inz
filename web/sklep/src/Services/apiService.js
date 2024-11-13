@@ -16,6 +16,10 @@ export function getEmployees() {
 	return axios.get("/api/employees").then((res) => res.data);
 }
 
+export function getEmployee(id) {
+	return axios.get("/api/employees/" + id + "/").then((res) => res.data);
+}
+
 export function deleteProduct(id) {
 	return axios.delete("/api/products/" + id + "/").then((res) => res.data);
 }
