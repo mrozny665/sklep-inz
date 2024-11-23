@@ -31,4 +31,6 @@ urlpatterns = [
     path('polls/', include('shop1.urls')),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/register/', views.RegistrationView.as_view(), name='register'),
+    path('api/login/', views.LoginView.as_view(), name='login'),
 ]

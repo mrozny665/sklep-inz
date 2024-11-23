@@ -16,3 +16,14 @@ web/node_modules/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+web/sklep/package.json
+web/sklep/package-lock.json
+backend/project/shop/__pycache__/urls.cpython-312.pyc
+backend/project/shop1/__pycache__/admin.cpython-312.pyc
+backend/project/shop1/__pycache__/models.cpython-312.pyc
+backend/project/shop1/__pycache__/serializers.cpython-312.pyc
+backend/project/shop1/__pycache__/views.cpython-312.pyc
+backend/project/shop1/migrations/0005_token_user.py
+backend/project/shop1/migrations/0006_alter_token_table_alter_user_table.py
+backend/project/shop1/migrations/__pycache__/0005_token_user.cpython-312.pyc
+backend/project/shop1/migrations/__pycache__/0006_alter_token_table_alter_user_table.cpython-312.pyc

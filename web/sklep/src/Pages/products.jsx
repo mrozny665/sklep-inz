@@ -1,9 +1,11 @@
 import ProductItem from "../Components/productItem";
 import { NavLink } from "react-router-dom";
-import Modal from "react-modal";
+// import Modal from "react-modal";
 import { useEffect, useState } from "react";
 import { getProducts, deleteProduct } from "../Services/apiService";
 import axios from "axios";
+import { Form, Button } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -38,6 +40,7 @@ const Products = () => {
 		const temp = products;
 		temp.push(item);
 		setProducts(temp);
+		closeModal();
 	};
 
 	useEffect(() => {
@@ -64,52 +67,68 @@ const Products = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<button class="nav-button" onClick={openModal}>
+				<div class="nav-button" onClick={openModal}>
 					Nowy towar
-				</button>
+				</div>
 				<NavLink to="/employee" className="nav-button">
 					Powrót
 				</NavLink>
 			</div>
-			<Modal isOpen={modalIsOpen} contentLabel="Test">
-				<div>
-					<div class="new-product">
-						<label htmlFor="name">Nazwa produktu: </label>
-						<input
-							id="name"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-						></input>
-						<label htmlFor="unit">Jednostka: </label>
-						<input
-							id="unit"
-							value={unit}
-							onChange={(e) => setUnit(e.target.value)}
-						></input>
-						<label htmlFor="vat">Stawka VAT: </label>
-						<select
-							id="vat"
-							value={vat}
-							onChange={(e) => setVat(e.target.value)}
-						>
-							<option value="0">0%</option>
-							<option value="5">5%</option>
-							<option value="8">8%</option>
-							<option value="23">23%</option>
-						</select>
-						<label htmlFor="price">Cena bez VAT: </label>
-						<input
-							id="price"
-							value={price}
-							onChange={(e) => setPrice(e.target.value)}
-							min={0}
-							type="number"
-							step={0.01}
-						></input>
-					</div>
-					<button onClick={handleAdd}>Zapisz</button>
-					<button onClick={closeModal}>Zamknij</button>
-				</div>
+			<Modal show={modalIsOpen} onHide={closeModal}>
+				<Modal.Header closeButton>
+					<Modal.Title>Dodaj nowy towar</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Form.Group>
+							<Form.Label>Nazwa produktu: </Form.Label>
+							<Form.Control
+								as="input"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+							/>
+						</Form.Group>
+
+						<Form.Group>
+							<Form.Label>Jednostka: </Form.Label>
+							<Form.Control
+								onChange={(e) => {
+									e.preventDefault();
+									setUnit(e.target.value);
+								}}
+								value={unit}
+							/>
+						</Form.Group>
+
+						<Form.Group>
+							<Form.Label>Stawka VAT: </Form.Label>
+							<Form.Select onChange={(e) => setVat(e.target.value)} value={vat}>
+								<option value="0">0%</option>
+								<option value="5">5%</option>
+								<option value="8">8%</option>
+								<option value="23">23%</option>
+							</Form.Select>
+						</Form.Group>
+
+						<Form.Group>
+							<Form.Label>Cena bez VAT: </Form.Label>
+							<Form.Control
+								onChange={(e) => setPrice(e.target.value)}
+								value={price}
+								type="number"
+								step="0.01"
+							/>
+						</Form.Group>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={closeModal}>
+						Zamknij
+					</Button>
+					<Button varian="primary" onClick={handleAdd}>
+						Dodaj towar
+					</Button>
+				</Modal.Footer>
 			</Modal>
 			<div>{/*Faktura*/}</div>
 			<div>
@@ -126,7 +145,7 @@ const Products = () => {
 					<div class="product-item-main-part">Cena 1 szt. z VAT</div>
 				</div>
 				{products
-					.filter((it) => it.product_name.includes(query))
+					.filter((it) => it.product_name.toLowerCase().includes(query))
 					.map((it) => (
 						<div class="product-item">
 							<div class="product-item-part">

@@ -21,6 +21,8 @@ const Supplies = () => {
 	};
 
 	const closeModal = () => {
+		setPickedProduct();
+		setIsPicked(false);
 		setModalOpen(false);
 	};
 
@@ -45,7 +47,7 @@ const Supplies = () => {
 		});
 		setPickedProduct();
 		setIsPicked(false);
-		setModalOpen(false);
+		closeModal();
 	};
 
 	useEffect(() => {
@@ -69,9 +71,9 @@ const Supplies = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<button class="nav-button" onClick={openModal}>
+				<div class="nav-button" onClick={openModal}>
 					Dodaj dostawę
-				</button>
+				</div>
 				<NavLink to="/employee" className="nav-button">
 					Powrót
 				</NavLink>

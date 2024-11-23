@@ -1,6 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const EmployeeMenu = () => {
+const EmployeeMenu = ({ isLoggedIn, setIsLoggedIn, isManager }) => {
+	let navigate = useNavigate();
+	useEffect(() => {
+		if (isLoggedIn === false) navigate("/");
+	}, []);
 	return (
 		<main class="grid menu">
 			<div class="menu-container-1">
@@ -16,9 +21,19 @@ const EmployeeMenu = () => {
 					<NavLink to="products" className="menu-tile">
 						Przegląd towaru
 					</NavLink>
-					<NavLink to="/" className="menu-tile">
-						Wyloguj
-					</NavLink>
+					{isManager ? (
+						<NavLink to="/hub" className="menu-tile">
+							Powrót
+						</NavLink>
+					) : (
+						<NavLink
+							to="/"
+							className="menu-tile"
+							onClick={() => setIsLoggedIn(false)}
+						>
+							Wyloguj
+						</NavLink>
+					)}
 				</div>
 			</div>
 		</main>

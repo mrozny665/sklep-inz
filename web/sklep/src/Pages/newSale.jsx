@@ -115,12 +115,12 @@ const NewSale = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<button class="nav-button" onClick={openModal}>
+				<div class="nav-button" onClick={openModal}>
 					Dodaj towar
-				</button>
-				<button class="nav-button" onClick={handleAddBill}>
+				</div>
+				<div class="nav-button" onClick={handleAddBill}>
 					Zapisz
-				</button>
+				</div>
 				<NavLink to="/employee/sales" className="nav-button">
 					Powrót
 				</NavLink>
@@ -162,7 +162,7 @@ const NewSale = () => {
 					</div>
 					{products
 						.filter((it) => it.count > 0)
-						.filter((it) => it.product_name.includes(query))
+						.filter((it) => it.product_name.toLowerCase().includes(query))
 						.map((it) => (
 							<div key={it.id} onClick={() => handleClickItem(it)}>
 								<div class="product-item">

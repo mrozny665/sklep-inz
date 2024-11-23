@@ -6,7 +6,7 @@ const ManagerMenu = () => {
 			<div class="menu-container-1">
 				<div class="menu-container-2">
 					<NavLink to="sales" className="menu-tile">
-						Przegląd sprzedaży
+						Podsumowanie sprzedaży
 					</NavLink>
 					<NavLink to="employees" className="menu-tile">
 						Pracownicy
