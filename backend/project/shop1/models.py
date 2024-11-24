@@ -1,26 +1,11 @@
 from django.db import models
 
 
-class Token(models.Model):
-    id = models.AutoField(primary_key=True)
-    token = models.CharField(max_length=255)
-    created_at = models.DateTimeField()
-    expires_at = models.DateTimeField()
-    user_id = models.IntegerField()
-    is_used = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'tokens'
-
-
 class User(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
+    employee_id = models.ForeignKey('Employee', models.DO_NOTHING, db_column='employee_id')
     login = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-
-    def __str__(self) -> str:
-        return self.name
 
     class Meta:
         db_table = 'users'

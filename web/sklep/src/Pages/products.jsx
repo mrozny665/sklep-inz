@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProducts, deleteProduct } from "../Services/apiService";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Table } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 
 const Products = () => {
@@ -67,11 +67,9 @@ const Products = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<div class="nav-button" onClick={openModal}>
-					Nowy towar
-				</div>
-				<NavLink to="/employee" className="nav-button">
-					Powrót
+				<Button onClick={openModal}>Nowy towar</Button>
+				<NavLink to="/employee">
+					<Button>Powrót</Button>
 				</NavLink>
 			</div>
 			<Modal show={modalIsOpen} onHide={closeModal}>
@@ -136,27 +134,34 @@ const Products = () => {
 				<input id="query" value={query} onChange={handleQuery}></input>
 			</div>
 			<div>{/*Góra listy */}</div>
-			<div class="sale-list">
-				<div class="product-item-main" style={{ paddingLeft: "130px" }}>
-					<div class="product-item-main-part">Nazwa towaru</div>
-					<div></div>
-					<div class="product-item-main-part">Stawka VAT</div>
-					<div class="product-item-main-part">Cena 1 szt. bez VAT</div>
-					<div class="product-item-main-part">Cena 1 szt. z VAT</div>
-				</div>
-				{products
-					.filter((it) => it.product_name.toLowerCase().includes(query))
-					.map((it) => (
-						<div class="product-item">
-							<div class="product-item-part">
-								<button onClick={() => handleDelete(it.product_id)}>
-									Usuń
-								</button>
-							</div>
-							<ProductItem key={it.id} element={it} />
-						</div>
-					))}
-			</div>
+			<Table striped bordered hover>
+				<thead>
+					<th />
+					<th>Nazwa towaru</th>
+					<th />
+					<th>Stawka VAT</th>
+					<th>Cena 1 szt. bez VAT</th>
+					<th>Cena 1 szt. z VAT</th>
+				</thead>
+				<tbody>
+					{products
+						.filter((it) => it.product_name.toLowerCase().includes(query))
+						.map((it) => (
+							<tr>
+								<td>
+									<Button onClick={() => handleDelete(it)}>Usuń</Button>
+								</td>
+								<td>
+									{it.product_name} {it.unit}
+								</td>
+								<td>{it.count}</td>
+								<td>{it.vat}</td>
+								<td>{Number(it.price_no_vat).toFixed(2)}</td>
+								<td>{Number(it.price_with_vat).toFixed(2)}</td>
+							</tr>
+						))}
+				</tbody>
+			</Table>
 		</div>
 	);
 };

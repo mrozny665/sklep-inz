@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
@@ -25,6 +25,10 @@ const Login = ({
 		}
 	}, []);
 
+	useEffect(() => {
+		console.log("isLoggedIn changed to:", isLoggedIn);
+	}, [isLoggedIn]);
+
 	const handleLogin = async (e) => {
 		e.preventDefault();
 		const formData = { login: login, password: password };
@@ -32,8 +36,14 @@ const Login = ({
 		const data = res.data;
 		if (data.success === true) {
 			setIsLoggedIn(true);
+			setId(data.id);
+			// const res = await axios
+			// 	.get("/api/employees/" + data.id)
+			// 	.then((res) => res.data);
+			// const manager = res.is_manager;
+			// manager ? setIsManager(true) : setIsManager(false);
+			// console.log(manager, isManager, isLoggedIn);
 			setIsManager(true);
-			setId(1);
 			if (isManager) navigate("/hub");
 			else navigate("/employee");
 		} else setShowAlert(true);

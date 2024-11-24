@@ -1,3 +1,7 @@
+import secrets
+import string
+
+from unidecode import unidecode
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -94,7 +98,70 @@ class LoginView(APIView):
                 status=status.HTTP_200_OK,
             )
         else:
+            is_active = user.employee_id.is_active
+            if is_active:
+                return Response(
+                    {
+                        "success": True,
+                        "message": "You are now logged in!",
+                        "id": user.employee_id.employee_id
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "This account is inactive!",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
+class HireView(APIView):
+
+    def generate_password(self):
+        alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits
+        password = "".join(secrets.choice(alphabet) for _ in range(8))
+        return password
+
+    def post(self, request, format=None):
+        name = request.data["employee_name"]
+        is_active = request.data["is_active"]
+        is_manager = request.data["is_manager"]
+        password = self.generate_password()
+        hashed_password = make_password(password=password, salt=SALT)
+        login = name.lower().replace(" ", "")
+        login = unidecode(login)
+        employee_serializer = EmployeeSerializer(data={
+            "employee_name": name,
+            "is_active": is_active,
+            "is_manager": is_manager
+        })
+        if employee_serializer.is_valid():
+            employee_serializer.save()
+            employee_id = employee_serializer.data["employee_id"]
+            user_serializer = UserSerializer(data={
+                "login": login,
+                "password": hashed_password,
+                "employee_id": employee_id
+            })
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response(
+                    {
+                        "success": True,
+                        "message": "Employee has been successfully registered!",
+                        "login": login,
+                        "password": password
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {"success": False, "message": "There was an error registering employee!"},
+                )
+        else:
             return Response(
-                {"success": True, "message": "You are now logged in!"},
-                status=status.HTTP_200_OK,
+                {"success": False, "message": "There was an error adding employee!"},
             )
+

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import SupplyItem from "../Components/supplyItem";
 import { NavLink } from "react-router-dom";
-import { getSupplies, getProducts } from "../Services/apiService";
+import { getSupplies, getProducts, getEmployees } from "../Services/apiService";
 import Modal from "react-modal";
 import ProductItem from "../Components/productItem";
 import axios from "axios";
 import "../Services/dateExtentions.jsx";
+import { Button, Table } from "react-bootstrap";
 
 const Supplies = () => {
 	const [supplies, setSupplies] = useState([]);
@@ -15,6 +15,7 @@ const Supplies = () => {
 	const [query, setQuery] = useState("");
 	const [isPicked, setIsPicked] = useState(false);
 	const [pickedProduct, setPickedProduct] = useState();
+	const [employees, setEmployees] = useState([]);
 
 	const openModal = () => {
 		setModalOpen(true);
@@ -52,11 +53,20 @@ const Supplies = () => {
 
 	useEffect(() => {
 		let mount = true;
-		getSupplies().then((res) => {
-			console.log("Response from api ", res);
-			setSupplies(res);
-			return () => (mount = false);
-		});
+		getEmployees()
+			.then((res) => {
+				console.log("Response from api ", res);
+				setEmployees(res);
+				return () => (mount = false);
+			})
+			.then(() => {
+				let mount = true;
+				getSupplies().then((res) => {
+					console.log("Response from api ", res);
+					setSupplies(res);
+					return () => (mount = false);
+				});
+			});
 	}, []);
 
 	useEffect(() => {
@@ -71,15 +81,13 @@ const Supplies = () => {
 	return (
 		<div>
 			<div class="navbar">
-				<div class="nav-button" onClick={openModal}>
-					Dodaj dostawę
-				</div>
-				<NavLink to="/employee" className="nav-button">
-					Powrót
+				<Button onClick={openModal}>Dodaj dostawę</Button>
+				<NavLink to="/employee">
+					<Button>Powrót</Button>
 				</NavLink>
 			</div>
 			<Modal isOpen={modalIsOpen} contentLabel="Test">
-				<button onClick={closeModal}>Zamknij</button>
+				<Button onClick={closeModal}>Zamknij</Button>
 				{isPicked ? (
 					<div>
 						<div class="product-item">
@@ -100,33 +108,54 @@ const Supplies = () => {
 					<label htmlFor="query">Wyszukaj: </label>
 					<input id="query" value={query} onChange={handleQuery}></input>
 				</div>
-				<div class="sale-list">
-					<div class="product-item-main" style={{ paddingLeft: "120px" }}>
-						<div class="product-item-main-part">Nazwa towaru</div>
-						<div></div>
-						<div class="product-item-main-part">Stawka VAT</div>
-						<div class="product-item-main-part">Cena 1 szt. bez VAT</div>
-						<div class="product-item-main-part">Cena 1 szt. z VAT</div>
-					</div>
-					{products
-						.filter((it) => it.product_name.includes(query))
-						.map((it) => (
-							<div
-								class="product-item"
-								key={it.id}
-								onClick={() => handleClickItem(it)}
-							>
-								<ProductItem key={it.id} element={it} />
-							</div>
-						))}
-				</div>
+
+				<Table striped bordered hover>
+					<thead>
+						<th>Nazwa towaru</th>
+						<th></th>
+						<th>Stawka VAT</th>
+						<th>Cena 1 szt. bez VAT</th>
+						<th>Cena 1 szt. z VAT</th>
+					</thead>
+					<tbody>
+						{products
+							.filter((it) => it.product_name.includes(query))
+							.map((it) => (
+								<tr onClick={() => handleClickItem(it)}>
+									<td>
+										{it.product_name} {it.unit}
+									</td>
+									<td>{it.count} szt.</td>
+									<td>{it.vat}</td>
+									<td>{Number(it.price_no_vat).toFixed(2)}</td>
+									<td>{Number(it.price_with_vat).toFixed(2)}</td>
+								</tr>
+							))}
+					</tbody>
+				</Table>
 			</Modal>
-			<div class="sale-list">
-				<div>Dostawy</div>
-				{supplies.map((it) => (
-					<SupplyItem key={it.id_rachunku} element={it} />
-				))}
-			</div>
+
+			<Table striped bordered hover>
+				<thead>
+					<th>#</th>
+					<th>Data dostawy</th>
+					<th>Pracownik przyjmujący dostawę</th>
+				</thead>
+				<tbody>
+					{supplies.map((it) => (
+						<tr>
+							<td>{it.supply_id}</td>
+							<td>{it.supply_date}</td>
+							<td>
+								{
+									employees.find((e) => e.employee_id === it.employee_id)
+										.employee_name
+								}
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</Table>
 		</div>
 	);
 };

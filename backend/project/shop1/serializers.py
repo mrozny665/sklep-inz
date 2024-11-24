@@ -1,17 +1,11 @@
 from rest_framework import serializers
-from .models import Product, Bill, Sale, Supply, Employee, User, Token
+from .models import Product, Bill, Sale, Supply, Employee, User
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["name", "login", "password"]
-
-
-class TokenSerializer(serializers.Serializer):
-    class Meta:
-        model = Token
-        fields = ["token", "created_at", "expires_at", "user_id", "is_used"]
+        fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):

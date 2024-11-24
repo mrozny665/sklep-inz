@@ -33,4 +33,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/register/', views.RegistrationView.as_view(), name='register'),
     path('api/login/', views.LoginView.as_view(), name='login'),
+    path('api/hire/', views.HireView.as_view(), name='hire'),
 ]
