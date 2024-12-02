@@ -26,12 +26,12 @@ router.register(r'bills', views.BillView, 'bills')
 router.register(r'sales', views.SaleView, 'sales')
 router.register(r'supplies', views.SupplyView, 'supplies')
 router.register(r'employees', views.EmployeeView, 'employees')
+router.register(r'productsupplies', views.ProductSupplyView, 'productsupplies')
 
 urlpatterns = [
     path('polls/', include('shop1.urls')),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/register/', views.RegistrationView.as_view(), name='register'),
     path('api/login/', views.LoginView.as_view(), name='login'),
     path('api/hire/', views.HireView.as_view(), name='hire'),
 ]

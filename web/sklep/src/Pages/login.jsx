@@ -27,6 +27,10 @@ const Login = ({
 
 	useEffect(() => {
 		console.log("isLoggedIn changed to:", isLoggedIn);
+		if (isLoggedIn) {
+			if (isManager) navigate("/hub");
+			else navigate("/employee");
+		}
 	}, [isLoggedIn]);
 
 	const handleLogin = async (e) => {
@@ -37,13 +41,7 @@ const Login = ({
 		if (data.success === true) {
 			setIsLoggedIn(true);
 			setId(data.id);
-			// const res = await axios
-			// 	.get("/api/employees/" + data.id)
-			// 	.then((res) => res.data);
-			// const manager = res.is_manager;
-			// manager ? setIsManager(true) : setIsManager(false);
-			// console.log(manager, isManager, isLoggedIn);
-			setIsManager(true);
+			setIsManager(data.is_manager);
 			if (isManager) navigate("/hub");
 			else navigate("/employee");
 		} else setShowAlert(true);

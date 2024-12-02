@@ -18,6 +18,7 @@ import Products from "./Pages/products";
 import Supplies from "./Pages/supplies";
 import Employees from "./Pages/employees";
 import { useState } from "react";
+import NewSupply from "./Pages/newSupply";
 
 function AppLayout() {
 	return <Outlet />;
@@ -60,7 +61,10 @@ const App = () => {
 						<Route path="newsale" element={<NewSale id={id} />} />
 					</Route>
 					<Route path="products" element={<Products />} />
-					<Route path="supplies" element={<Supplies id={id} />} />
+					<Route path="supplies">
+						<Route path="" element={<Supplies id={id} />} />
+						<Route path="newsupply" element={<NewSupply id={id} />} />
+					</Route>
 				</Route>
 				<Route
 					path="hub"

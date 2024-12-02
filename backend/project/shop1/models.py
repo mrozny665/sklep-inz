@@ -11,12 +11,21 @@ class User(models.Model):
         db_table = 'users'
 
 
+class ProductSupply(models.Model):
+    product_supply_id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', models.DO_NOTHING, db_column='product_id')
+    count = models.IntegerField()
+    supply_id = models.ForeignKey('Supply', models.DO_NOTHING, db_column='supply_id')
+
+    class Meta:
+        db_table = 'product_supplies'
+
+
 # Create your models here.
 class Supply(models.Model):
     supply_id = models.AutoField(primary_key=True)
     supply_date = models.DateField()
-    product_id = models.ForeignKey('Product', models.DO_NOTHING, db_column='product_id')
-    count = models.IntegerField()
+    product_count = models.IntegerField()
     employee_id = models.ForeignKey('Employee', models.DO_NOTHING, db_column='employee_id')
 
     class Meta:
@@ -97,3 +106,16 @@ class Deletion(models.Model):
 
     class Meta:
         db_table = 'deletions'
+
+
+class UserLogin(models.Model):
+    id = models.AutoField(primary_key=True)
+    employee_id = models.IntegerField()
+    login = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    is_active = models.BooleanField()
+    is_manager = models.BooleanField()
+
+    class Meta:
+        db_table = 'user_login_view'
+        managed = False

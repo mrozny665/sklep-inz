@@ -11,6 +11,8 @@ const Employees = () => {
 	const [isAddedModalOpen, setIsAddedModalOpen] = useState(false);
 	const [login, setLogin] = useState("");
 	const [password, setPassword] = useState("");
+	const [fireModalOpen, setFireModalOpen] = useState(false);
+	const [toFire, setToFire] = useState();
 
 	useEffect(() => {
 		let mount = true;
@@ -35,6 +37,11 @@ const Employees = () => {
 		setPassword("");
 	};
 
+	const closeFireModal = () => {
+		setToFire(null);
+		setFireModalOpen(false);
+	};
+
 	const handleHire = async () => {
 		const formData = {
 			employee_name: name,
@@ -49,6 +56,16 @@ const Employees = () => {
 			setIsAddedModalOpen(true);
 			setIsOpen(false);
 		}
+	};
+
+	const handleFire = async () => {
+		const form = {
+			is_active: false,
+		};
+		const res = await axios.patch("/api/employees/" + toFire + "/", form);
+		const data = res.data;
+		setToFire(null);
+		setFireModalOpen(false);
 	};
 
 	return (
@@ -98,6 +115,22 @@ const Employees = () => {
 					</Button>
 				</Modal.Footer>
 			</Modal>
+			<Modal show={fireModalOpen} onHide={closeFireModal}>
+				<Modal.Header>
+					<Modal.Title>Uwaga!</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>Czy na pewno chcesz zwolnić pracownika?</p>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={closeFireModal}>
+						Anuluj
+					</Button>
+					<Button variant="danger" onClick={handleFire}>
+						Zwolnij
+					</Button>
+				</Modal.Footer>
+			</Modal>
 			<div>
 				<Table striped bordered hover>
 					<thead>
@@ -105,16 +138,30 @@ const Employees = () => {
 						<th>Imię i nazwisko</th>
 						<th>Stanowisko</th>
 						<th>Czy aktywny?</th>
+						<th />
 					</thead>
 					<tbody>
-						{employees.map((it) => (
-							<tr>
-								<td>{it.employee_id}</td>
-								<td>{it.employee_name}</td>
-								<td>{it.is_manager ? "Manager" : "Pracownik"}</td>
-								<td>{it.is_active ? "TAK" : "NIE"}</td>
-							</tr>
-						))}
+						{employees
+							.sort((a, b) => a.employee_id - b.employee_id)
+							.map((it) => (
+								<tr>
+									<td>{it.employee_id}</td>
+									<td>{it.employee_name}</td>
+									<td>{it.is_manager ? "Manager" : "Pracownik"}</td>
+									<td>{it.is_active ? "TAK" : "NIE"}</td>
+									<td>
+										<Button
+											variant="danger"
+											onClick={() => {
+												setFireModalOpen(true);
+												setToFire(it.employee_id);
+											}}
+										>
+											Zwolnij
+										</Button>
+									</td>
+								</tr>
+							))}
 					</tbody>
 				</Table>
 			</div>

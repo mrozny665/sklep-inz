@@ -1,55 +1,72 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { getSupplies, getProducts, getEmployees } from "../Services/apiService";
-import Modal from "react-modal";
-import ProductItem from "../Components/productItem";
-import axios from "axios";
+import {
+	getSupplies,
+	getEmployees,
+	getProductSupplies,
+	getProducts,
+} from "../Services/apiService";
 import "../Services/dateExtentions.jsx";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Modal } from "react-bootstrap";
 
 const Supplies = () => {
 	const [supplies, setSupplies] = useState([]);
-	const [modalIsOpen, setModalOpen] = useState(false);
-	const [products, setProducts] = useState([]);
-	const [count, setCount] = useState(0);
-	const [query, setQuery] = useState("");
-	const [isPicked, setIsPicked] = useState(false);
-	const [pickedProduct, setPickedProduct] = useState();
 	const [employees, setEmployees] = useState([]);
+	const [supplyProducts, setSupplyProducts] = useState([]);
+	const [openModal, setOpenModal] = useState(false);
+	const [chosenSupply, setChosenSupply] = useState();
+	const [productSupplies, setProductSupplies] = useState([]);
+	const [products, setProducts] = useState([]);
 
-	const openModal = () => {
-		setModalOpen(true);
+	const handleGetProducts = async () => {
+		getProductSupplies()
+			.then((res) => {
+				console.log("Response from api ", res);
+				const temp = res;
+				setProductSupplies(
+					temp.filter((it) => it.supply_id === chosenSupply.supply_id)
+				);
+			})
+			.then(
+				getProducts()
+					.then((res) => {
+						setProducts(res);
+						console.log(res);
+						console.log(products);
+					})
+					.then(console.log(products))
+			);
 	};
 
 	const closeModal = () => {
-		setPickedProduct();
-		setIsPicked(false);
-		setModalOpen(false);
+		setOpenModal(false);
+		setSupplyProducts([]);
+		setChosenSupply();
+		setProductSupplies([]);
 	};
 
-	const handleQuery = (e) => {
-		setQuery(e.target.value);
-	};
+	useEffect(() => {
+		console.log(chosenSupply);
+		if (chosenSupply) {
+			handleGetProducts();
+		}
+	}, [chosenSupply]);
 
-	const handleClickItem = (e) => {
-		console.log("Click " + e);
-		setIsPicked(true);
-		setPickedProduct(e);
-	};
-
-	const handleAdd = async (e) => {
-		e.preventDefault();
-		const date = new Date(Date.now());
-		const res = await axios.post("/api/supplies/", {
-			supply_date: date.toJSONDate(),
-			count: count,
-			product_id: pickedProduct.product_id,
-			employee_id: 1,
-		});
-		setPickedProduct();
-		setIsPicked(false);
-		closeModal();
-	};
+	useEffect(() => {
+		console.log(products);
+		if (products.length !== 0) {
+			productSupplies.forEach((e) => {
+				const temp = supplyProducts;
+				console.log(temp);
+				const p = products.find((it) => it.product_id === e.product_id);
+				console.log(p);
+				temp.push(p);
+				console.log(temp);
+				setSupplyProducts(temp);
+			});
+			setOpenModal(true);
+		}
+	}, [products]);
 
 	useEffect(() => {
 		let mount = true;
@@ -69,59 +86,37 @@ const Supplies = () => {
 			});
 	}, []);
 
-	useEffect(() => {
-		let mount = true;
-		getProducts().then((res) => {
-			console.log("Response from api ", res);
-			setProducts(res);
-			return () => (mount = false);
-		});
-	}, [modalIsOpen]);
-
 	return (
 		<div>
 			<div class="navbar">
-				<Button onClick={openModal}>Dodaj dostawę</Button>
+				<NavLink to="newsupply">
+					<Button>Dodaj dostawę</Button>
+				</NavLink>
 				<NavLink to="/employee">
 					<Button>Powrót</Button>
 				</NavLink>
 			</div>
-			<Modal isOpen={modalIsOpen} contentLabel="Test">
-				<Button onClick={closeModal}>Zamknij</Button>
-				{isPicked ? (
-					<div>
-						<div class="product-item">
-							<ProductItem element={pickedProduct} />
-						</div>
-						<label htmlFor="count">Liczba</label>
-						<input
-							id="count"
-							value={count}
-							type="number"
-							onChange={(e) => setCount(e.target.value)}
-							min={1}
-						></input>
-						<button onClick={handleAdd}>Dodaj</button>
-					</div>
-				) : null}
-				<div>
-					<label htmlFor="query">Wyszukaj: </label>
-					<input id="query" value={query} onChange={handleQuery}></input>
-				</div>
 
-				<Table striped bordered hover>
-					<thead>
-						<th>Nazwa towaru</th>
-						<th></th>
-						<th>Stawka VAT</th>
-						<th>Cena 1 szt. bez VAT</th>
-						<th>Cena 1 szt. z VAT</th>
-					</thead>
-					<tbody>
-						{products
-							.filter((it) => it.product_name.includes(query))
-							.map((it) => (
-								<tr onClick={() => handleClickItem(it)}>
+			<Modal show={openModal} onHide={closeModal}>
+				<Modal.Header>
+					<Modal.Title>
+						Dostawa nr {chosenSupply ? chosenSupply.supply_id : null}
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>Data dostawy: {chosenSupply ? chosenSupply.supply_date : null}</p>
+					<p>Pracownik przymujący dostawę: Łukasz Mróz</p>
+					<Table striped bordered hover>
+						<thead>
+							<th>Nazwa towaru</th>
+							<th />
+							<th>Stawka VAT</th>
+							<th>Cena 1 szt. bez VAT</th>
+							<th>Cena 1 szt. z VAT</th>
+						</thead>
+						<tbody>
+							{supplyProducts.map((it) => (
+								<tr>
 									<td>
 										{it.product_name} {it.unit}
 									</td>
@@ -131,21 +126,28 @@ const Supplies = () => {
 									<td>{Number(it.price_with_vat).toFixed(2)}</td>
 								</tr>
 							))}
-					</tbody>
-				</Table>
+						</tbody>
+					</Table>
+				</Modal.Body>
 			</Modal>
 
 			<Table striped bordered hover>
 				<thead>
 					<th>#</th>
 					<th>Data dostawy</th>
+					<th>Liczba towarów</th>
 					<th>Pracownik przyjmujący dostawę</th>
 				</thead>
 				<tbody>
 					{supplies.map((it) => (
-						<tr>
+						<tr
+							onClick={() => {
+								setChosenSupply(it);
+							}}
+						>
 							<td>{it.supply_id}</td>
 							<td>{it.supply_date}</td>
+							<td>{it.product_count}</td>
 							<td>
 								{
 									employees.find((e) => e.employee_id === it.employee_id)

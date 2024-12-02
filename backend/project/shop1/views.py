@@ -12,6 +12,9 @@ from rest_framework.views import APIView
 from shop1.models import Product
 from shop1.serializers import ProductSerializer
 
+from shop1.models import ProductSupply
+from shop1.serializers import ProductSupplySerializer
+
 from shop1.models import Bill
 from shop1.serializers import BillSerializer
 
@@ -24,8 +27,9 @@ from shop1.serializers import SupplySerializer
 from shop1.models import Employee
 from shop1.serializers import EmployeeSerializer
 
-from shop1.models import User
 from shop1.serializers import UserSerializer
+
+from shop1.models import UserLogin
 
 SALT = "8b4f6b2cc1868d75ef79e5cfb8779c11b6a374bf0fce05b485581bf4e1e25b96c8c2855015de8449"
 URL = "http://localhost:3000"
@@ -54,6 +58,11 @@ class SaleView(viewsets.ModelViewSet):
 class SupplyView(viewsets.ModelViewSet):
     serializer_class = SupplySerializer
     queryset = Supply.objects.all()
+
+
+class ProductSupplyView(viewsets.ModelViewSet):
+    serializer_class = ProductSupplySerializer
+    queryset = ProductSupply.objects.all()
 
 
 class EmployeeView(viewsets.ModelViewSet):
@@ -88,7 +97,7 @@ class LoginView(APIView):
         login = request.data["login"]
         password = request.data["password"]
         hashed_password = make_password(password=password, salt=SALT)
-        user = User.objects.filter(login=login).first()
+        user = UserLogin.objects.filter(login=login).first()
         if user is None or user.password != hashed_password:
             return Response(
                 {
@@ -98,13 +107,14 @@ class LoginView(APIView):
                 status=status.HTTP_200_OK,
             )
         else:
-            is_active = user.employee_id.is_active
+            is_active = user.is_active
             if is_active:
                 return Response(
                     {
                         "success": True,
                         "message": "You are now logged in!",
-                        "id": user.employee_id.employee_id
+                        "id": user.employee_id,
+                        "is_manager": user.is_manager,
                     },
                     status=status.HTTP_200_OK,
                 )
@@ -116,6 +126,7 @@ class LoginView(APIView):
                     },
                     status=status.HTTP_200_OK,
                 )
+
 
 class HireView(APIView):
 
@@ -164,4 +175,3 @@ class HireView(APIView):
             return Response(
                 {"success": False, "message": "There was an error adding employee!"},
             )
-

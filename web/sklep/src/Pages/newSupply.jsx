@@ -1,14 +1,13 @@
-import ProductItem from "../Components/productItem";
+import ProductItem from "../Components/productItem.jsx";
 import { NavLink } from "react-router-dom";
-// import Modal from "react-modal";
 import { useEffect, useState } from "react";
-import { getProducts } from "../Services/apiService";
+import { getProducts } from "../Services/apiService.js";
 import axios from "axios";
 import "../Services/dateExtentions.jsx";
 import { Button, Table } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 
-const NewSale = () => {
+const NewSupply = () => {
 	const [items, setItems] = useState([]);
 	const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -40,34 +39,22 @@ const NewSale = () => {
 		});
 	}, [modalIsOpen]);
 
-	const handleAddBill = async (e) => {
+	const handleAddSupply = async (e) => {
 		e.preventDefault();
-		console.log(items);
-		let sum_no_vat = 0;
-		let sum_with_vat = 0;
-		items.forEach((it) => {
-			sum_no_vat += it.price_no_vat * it.count;
-			sum_with_vat += it.price_with_vat * it.count;
-		});
 		const date = new Date(Date.now());
-		const bill = {
-			issue_date: date.toJSONDate(),
-			products_count: items.length,
-			price_no_vat: sum_no_vat,
-			price_with_vat: sum_with_vat,
+		const supplyMain = {
+			supply_date: date.toJSONDate(),
+			product_count: items.length,
 			employee_id: Number(1),
 		};
-		console.log(bill);
-		const res = await axios.post("/api/bills/", bill);
+		const res = await axios.post("/api/supplies/", supplyMain);
 		console.log(res);
-		const bill_id = res.data.bill_id;
+		const supplyId = res.data.supply_id;
 		items.forEach(async (e) => {
-			const res = await axios.post("/api/sales/", {
+			const res = await axios.post("/api/productsupplies/", {
 				count: e.count,
-				price_no_vat: e.price_no_vat * e.count,
-				price_with_vat: e.price_with_vat * e.count,
 				product_id: e.product_id,
-				bill_id: bill_id,
+				supply_id: supplyId,
 			});
 			console.log(res);
 		});
@@ -110,8 +97,8 @@ const NewSale = () => {
 		<div>
 			<div class="navbar">
 				<Button onClick={openModal}>Dodaj towar</Button>
-				<Button onClick={handleAddBill}>Zapisz</Button>
-				<NavLink to="/employee/sales">
+				<Button onClick={handleAddSupply}>Zapisz</Button>
+				<NavLink to="/employee/supplies">
 					<Button>Powrót</Button>
 				</NavLink>
 			</div>
@@ -134,7 +121,6 @@ const NewSale = () => {
 								defaultValue={0}
 								onChange={(e) => setCount(e.target.value)}
 								min={1}
-								max={pickedProduct.count}
 							></input>
 						</div>
 					) : null}
@@ -152,7 +138,6 @@ const NewSale = () => {
 						</thead>
 						<tbody>
 							{products
-								.filter((it) => it.count > 0)
 								.filter((it) => it.product_name.toLowerCase().includes(query))
 								.map((it) => (
 									<tr onClick={() => handleClickItem(it)}>
@@ -185,8 +170,6 @@ const NewSale = () => {
 					<th>Stawka VAT</th>
 					<th>Cena 1 szt. bez VAT</th>
 					<th>Cena 1 szt. z VAT</th>
-					<th>Cena łączna bez VAT</th>
-					<th>Cena łączna z VAT</th>
 				</thead>
 				<tbody>
 					{items.map((it) => (
@@ -197,12 +180,10 @@ const NewSale = () => {
 							<td>
 								{it.product_name} {it.unit}
 							</td>
-							<td>{it.count}</td>
-							<td>{it.vat}</td>
+							<td>{it.count} szt.</td>
+							<td>{it.vat} %</td>
 							<td>{Number(it.price_no_vat).toFixed(2)}</td>
 							<td>{Number(it.price_with_vat).toFixed(2)}</td>
-							<td>{Number(Number(it.price_no_vat) * it.count).toFixed(2)}</td>
-							<td>{Number(Number(it.price_with_vat) * it.count).toFixed(2)}</td>
 						</tr>
 					))}
 				</tbody>
@@ -211,4 +192,4 @@ const NewSale = () => {
 	);
 };
 
-export default NewSale;
+export default NewSupply;

@@ -1,10 +1,16 @@
-import ProductItem from "../Components/productItem";
 import { NavLink } from "react-router-dom";
-// import Modal from "react-modal";
 import { useEffect, useState } from "react";
-import { getProducts, deleteProduct } from "../Services/apiService";
+import { getProducts } from "../Services/apiService";
 import axios from "axios";
-import { Form, Button, Table } from "react-bootstrap";
+import {
+	Form,
+	Button,
+	Table,
+	Row,
+	Col,
+	Toast,
+	ToastContainer,
+} from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 
 const Products = () => {
@@ -58,11 +64,51 @@ const Products = () => {
 		setQuery(e.target.value);
 	};
 
-	const handleDelete = (id) => {
-		deleteProduct(id).then(() =>
-			setProducts(products.filter((p) => p.product_id !== id))
-		);
+	const [deleted, setDeleted] = useState();
+	const [deletedAmount, setDeletedAmount] = useState(0);
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+	const closeDeleteModal = () => {
+		setDeleted(null);
+		setDeletedAmount(0);
+		setOpenDeleteModal(false);
 	};
+
+	const addAmount = () => {
+		if (1 + deletedAmount >= deleted.count) {
+			setDeletedAmount(deleted.count);
+		} else {
+			setDeletedAmount(deletedAmount + 1);
+		}
+	};
+
+	const subtractAmount = () => {
+		if (deletedAmount <= 0) {
+			setDeletedAmount(0);
+		} else {
+			setDeletedAmount(deletedAmount - 1);
+		}
+	};
+
+	const handleDelete = async () => {
+		const newCount = deleted.count - deletedAmount;
+		const form = {
+			count: newCount,
+		};
+		const res = await axios.patch(
+			"/api/products/" + deleted.product_id + "/",
+			form
+		);
+		const i = products.findIndex((it) => it === deleted);
+		products[i].count = newCount;
+		setDeleted(null);
+		setDeletedAmount(0);
+		setOpenDeleteModal(false);
+		setShowDeleteToast(true);
+	};
+
+	const [showDeleteToast, setShowDeleteToast] = useState(false);
+	const [showAddToast, setShowAddToast] = useState(false);
 
 	return (
 		<div>
@@ -72,6 +118,34 @@ const Products = () => {
 					<Button>Powrót</Button>
 				</NavLink>
 			</div>
+			<ToastContainer position="bottom-end">
+				<Toast
+					onClose={() => setShowDeleteToast(false)}
+					show={showDeleteToast}
+					className="d-inline-block m-1"
+					bg="success"
+					delay={3000}
+					autohide
+				>
+					<Toast.Header>
+						<strong className="me-auto">Sukces!</strong>
+					</Toast.Header>
+					<Toast.Body>Usunięto towar!</Toast.Body>
+				</Toast>
+				<Toast
+					onClose={() => setShowAddToast(false)}
+					show={showAddToast}
+					className="d-inline-block m-1"
+					bg="success"
+					delay={3000}
+					autohide
+				>
+					<Toast.Header>
+						<strong className="me-auto">Sukces!</strong>
+					</Toast.Header>
+					<Toast.Body>Dodano towar!</Toast.Body>
+				</Toast>
+			</ToastContainer>
 			<Modal show={modalIsOpen} onHide={closeModal}>
 				<Modal.Header closeButton>
 					<Modal.Title>Dodaj nowy towar</Modal.Title>
@@ -128,6 +202,39 @@ const Products = () => {
 					</Button>
 				</Modal.Footer>
 			</Modal>
+			<Modal show={openDeleteModal} onHide={closeDeleteModal}>
+				<Modal.Header closeButton>
+					<Modal.Title>Usuń towar</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>Ile sztuk towaru usunąć?</p>
+					<Form>
+						<Row>
+							<Col md="auto">
+								<Button onClick={subtractAmount}>-</Button>
+							</Col>
+							<Col>
+								<Form.Control
+									value={deletedAmount}
+									onChange={(e) => setDeletedAmount(e.target.value)}
+									type="number"
+									min={0}
+									max={deleted ? deleted.count : 10}
+								></Form.Control>
+							</Col>
+							<Col md="auto">
+								<Button onClick={addAmount}>+</Button>
+							</Col>
+						</Row>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary">Anuluj</Button>
+					<Button type="submit" onClick={handleDelete}>
+						Usuń
+					</Button>
+				</Modal.Footer>
+			</Modal>
 			<div>{/*Faktura*/}</div>
 			<div>
 				<label htmlFor="query">Wyszukaj: </label>
@@ -149,15 +256,23 @@ const Products = () => {
 						.map((it) => (
 							<tr>
 								<td>
-									<Button onClick={() => handleDelete(it)}>Usuń</Button>
+									<Button
+										onClick={() => {
+											setDeleted(it);
+											setOpenDeleteModal(true);
+											// handleDelete(it);
+										}}
+									>
+										Usuń
+									</Button>
 								</td>
 								<td>
 									{it.product_name} {it.unit}
 								</td>
-								<td>{it.count}</td>
-								<td>{it.vat}</td>
-								<td>{Number(it.price_no_vat).toFixed(2)}</td>
-								<td>{Number(it.price_with_vat).toFixed(2)}</td>
+								<td>{it.count} szt.</td>
+								<td>{it.vat} %</td>
+								<td>{Number(it.price_no_vat).toFixed(2)} zł</td>
+								<td>{Number(it.price_with_vat).toFixed(2)} zł</td>
 							</tr>
 						))}
 				</tbody>
